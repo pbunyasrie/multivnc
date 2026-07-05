@@ -450,7 +450,7 @@ ViewerWindow::ViewerWindow(wxWindow* parent, VNCConn* conn):
   label_recvbuf = new wxStaticText(stats_container, wxID_ANY, _("Rcv Buffer:"));
   gauge_recvbuf = new wxGauge(stats_container, wxID_ANY, 10, wxDefaultPosition, wxSize(80,20), wxGA_HORIZONTAL|wxGA_SMOOTH);
 
-  dflt_fg = gauge_recvbuf->GetForegroundColour();
+  dflt_fg = label_recvbuf->GetForegroundColour();
 
   // create grid sizers, two cause we wanna hide the multicast one sometimes
   wxGridSizer* grid_sizer_stats_uni = new wxGridSizer(2, 3, 0, 0);
