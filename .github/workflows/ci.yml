@@ -15,6 +15,7 @@ jobs:
             cmake_options: "-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug"
           - os: windows-2022
             cmake_options: "-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake"
+            build_config: Release
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -40,15 +41,15 @@ jobs:
       - name: Install Windows Build Dependencies
         if: ${{ matrix.os == 'windows-2022' }}
         run: |
-          conan install . --output-folder=build --build=missing --settings=build_type=Debug
+          conan install . --output-folder=build --build=missing --settings=build_type=Release
       - name: Build
         shell: bash
         run: |
           mkdir -p build
           cd build
           cmake ${{ matrix.cmake_options }} ..
-          cmake --build .
-          cpack -V -C Debug
+          cmake --build . --config ${{ matrix.build_config || 'Debug' }}
+          cpack -V -C ${{ matrix.build_config || 'Debug' }}
       - name: Archive Ubuntu Build Artifacts
         if: ${{ matrix.os == 'ubuntu-latest' }}
         uses: actions/upload-artifact@v4
