@@ -20,6 +20,10 @@ TightVNC/TigerVNC/UltraVNC cannot.
 Conan default profile: msvc 194, x86_64, Release, dynamic runtime
 (`conan profile detect` — already done, stored in `~/.conan2/profiles/default`).
 
+Toolchain setup is automated: `install-toolchain.ps1` installs any missing
+component via winget/pip (idempotent; VS Build Tools is ~3 GB and may show UAC
+prompts). `build-windows.ps1` calls it automatically when a tool is missing.
+
 ## Building
 
 Run `.\build-windows.ps1` from the repo root. It does, in order:
