@@ -12,7 +12,8 @@ jobs:
           - windows-2022
         include:
           - os: macos-latest
-            cmake_options: "-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug"
+            cmake_options: "-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release"
+            build_config: Release
           - os: windows-2022
             cmake_options: "-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake"
             build_config: Release
@@ -37,7 +38,7 @@ jobs:
       - name: Install MacOS Build Dependencies
         if: ${{ matrix.os == 'macos-latest' }}
         run: |
-          conan install . --output-folder=build --build=missing --settings=build_type=Debug
+          conan install . --output-folder=build --build=missing --settings=build_type=Release
       - name: Install Windows Build Dependencies
         if: ${{ matrix.os == 'windows-2022' }}
         run: |
