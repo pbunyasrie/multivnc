@@ -69,3 +69,33 @@ jobs:
         with:
           name: MultiVNC Windows Package
           path: build/*.msi
+
+  # On tag pushes (e.g. `git tag v0.11.0 && git push --tags`), gather the
+  # per-OS packages built above and attach them to the GitHub Release for the
+  # tag. A single job (rather than one per matrix OS) avoids a race on release
+  # creation.
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Collect package files
+        run: |
+          mkdir -p release-assets
+          find artifacts -type f \( -name '*.msi' -o -name '*.dmg' -o -name '*.deb' \) -exec cp {} release-assets/ \;
+          ls -l release-assets
+      - name: Publish to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" release-assets/* --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" release-assets/* --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --generate-notes
+          fi
